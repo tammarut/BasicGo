@@ -1,7 +1,7 @@
 package main
 
 //! Go Connect Mongodb | Tutorial
-//* Pokemondb
+//* Pokemondb: only Go and mongo
 import (
 	"fmt"
 	"log"
