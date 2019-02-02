@@ -1,5 +1,8 @@
 package main
 
+//!Data are slice <-func gen()
+//! main call func CenteredAvg =>find the average of a list of numbers
+
 import (
 	"fmt"
 
@@ -7,7 +10,7 @@ import (
 )
 
 func main() {
-	xxi := gen()
+	xxi := gen() //=> xxi kept func gen() that return e
 	for _, v := range xxi {
 		fmt.Println(mymath.CenteredAvg(v))
 	}
@@ -18,6 +21,6 @@ func gen() [][]int {
 	b := []int{0, 8, 10, 1000}
 	c := []int{9000, 4, 10, 8, 6, 12}
 	d := []int{123, 744, 140, 200}
-	e := [][]int{a, b, c, d}
+	e := [][]int{a, b, c, d} //=> partie a,b,c,d
 	return e
 }

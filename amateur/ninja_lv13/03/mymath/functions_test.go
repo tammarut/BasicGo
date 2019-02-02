@@ -1,5 +1,6 @@
 package mymath
 
+//! Test, Example, Benchmark
 import (
 	"fmt"
 	"testing"
@@ -10,6 +11,7 @@ type blueprint struct {
 	answer float64
 }
 
+//* Test ->func CenteredAvg
 func TestCenteredAvg(t *testing.T) {
 	box := []blueprint{
 		blueprint{[]int{1, 4, 6, 8, 100}, 6},
@@ -26,6 +28,7 @@ func TestCenteredAvg(t *testing.T) {
 	}
 }
 
+//* Example func CenteredAvg
 func ExampleCenteredAvg() {
 	solo := []int{1, 4, 6, 8, 100}
 	fmt.Println(CenteredAvg(solo))
@@ -34,6 +37,7 @@ func ExampleCenteredAvg() {
 
 }
 
+//* Benchmark func CenteredAvg
 func BenchmarkCenteredAvg(b *testing.B) {
 	solo := []int{1, 4, 6, 8, 100}
 	for i := 0; i < b.N; i++ {
