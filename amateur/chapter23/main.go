@@ -1,8 +1,10 @@
 package main
 
+//! เขียนโปรแกรมรับจำนวนจากคีย์บอด แล้ววาดสามเหลี่่ยมเต็ม nxn
+
 import "fmt"
 
-//! เขียนโปรแกรมรับจำนวนจากคีย์บอด แล้ววาดสามเหลี่่ยมเต็ม nxn
+//* Soulution 1
 func main() {
 	var input int
 	fmt.Print("Input numbers:")
@@ -20,3 +22,22 @@ func main() {
 	}
 
 }
+
+//* Solution 2
+// func main() {
+// 	var input, x, y int
+// 	fmt.Print("Input numbers:")
+// 	fmt.Scanln(&input)
+
+// 	for y = input; y > 0; y-- {
+// 		for x = -input; x <= input; x++ {
+// 			if y <= (input+x) && y <= input-x {
+// 				fmt.Print("*")
+// 			} else {
+// 				fmt.Print("-")
+// 			}
+// 		}
+// 		fmt.Println() //=> Next new row
+// 	}
+
+// }
