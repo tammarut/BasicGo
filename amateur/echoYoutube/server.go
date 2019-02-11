@@ -55,17 +55,17 @@ func getMobiles(c echo.Context) error {
 	})
 }
 
-func addMobile(c echo.Context) error {
+func addMobile(c echo.Context) error { //=> Solution1: Fastest ReadAll and Unmarshal
 	mobile := Mobilest{}
 
 	defer c.Request().Body.Close()
-	b, err := ioutil.ReadAll(c.Request().Body)
+	b, err := ioutil.ReadAll(c.Request().Body) //* Here's a key
 	if err != nil {
 		log.Println("Failed reading body from add Mobile:", err)
 		return c.String(http.StatusInternalServerError, "Error =>func addMobile Request Body.")
 	}
 
-	err = json.Unmarshal(b, &mobile)
+	err = json.Unmarshal(b, &mobile) //* Here's a key
 	if err != nil {
 		log.Println("Failed unmarshaling func addMobile:", err)
 		return c.String(http.StatusInternalServerError, "Error =>func addMobile unmarshaling.")
@@ -74,12 +74,12 @@ func addMobile(c echo.Context) error {
 	return c.String(http.StatusOK, "We got your mobiles!!")
 
 }
-func addLaptop(c echo.Context) error {
+func addLaptop(c echo.Context) error { //=> Solution2: Fastest NewDecoder and Decode
 	laptop := Laptopst{}
 
 	defer c.Request().Body.Close()
 
-	err := json.NewDecoder(c.Request().Body).Decode(&laptop)
+	err := json.NewDecoder(c.Request().Body).Decode(&laptop) //* Here's key
 	if err != nil {
 		log.Println("Failed processing func addLaptop NewDecoder:", err)
 		c.String(http.StatusInternalServerError, "Error =>func addLaptop Newdecoder")
@@ -89,10 +89,10 @@ func addLaptop(c echo.Context) error {
 	return c.String(http.StatusOK, "We got your laptop!!")
 }
 
-func addTablet(c echo.Context) error {
+func addTablet(c echo.Context) error { //=> Solution3: Slow than both solutions above.
 	tablet := Tabletst{}
 
-	err := c.Bind(&tablet)
+	err := c.Bind(&tablet) //* Here
 	if err != nil {
 		log.Println("Failed processing func addTablet Bind:", err)
 		c.String(http.StatusInternalServerError, "Error =>func addTablet Bind")
@@ -112,9 +112,9 @@ func main() {
 	// Routes
 	e.GET("/", hello)                  //=> Hello
 	e.GET("/mobile/:data", getMobiles) //=> GET by parameter
-	e.POST("/mobile", addMobile)
-	e.POST("/laptop", addLaptop)
-	e.POST("/tablet", addTablet)
+	e.POST("/mobile", addMobile)       //=>POST by ReadAll body and Unmarashal
+	e.POST("/laptop", addLaptop)       //=>POST by NewDecoder and Decode
+	e.POST("/tablet", addTablet)       //=>POST by Bind
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
 }
