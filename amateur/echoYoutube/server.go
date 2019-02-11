@@ -23,6 +23,12 @@ type Laptopst struct {
 	Ram    string `json: "ram, omitempty"`
 }
 
+type Tabletst struct {
+	Tablet  string `json: "tablet, omitempty"`
+	Storage string `json: "storage, omitempty"`
+	Screen  string `json: "screen, omitempty"`
+}
+
 // Handler
 func hello(c echo.Context) error { //=> Default
 	return c.String(http.StatusOK, "Hello, echoYoutube!")
@@ -82,6 +88,19 @@ func addLaptop(c echo.Context) error {
 	fmt.Printf("%#v\n", laptop)
 	return c.String(http.StatusOK, "We got your laptop!!")
 }
+
+func addTablet(c echo.Context) error {
+	tablet := Tabletst{}
+
+	err := c.Bind(&tablet)
+	if err != nil {
+		log.Println("Failed processing func addTablet Bind:", err)
+		c.String(http.StatusInternalServerError, "Error =>func addTablet Bind")
+	}
+	fmt.Printf("%#v\n", tablet)
+	return c.String(http.StatusOK, "We got your tablet!!")
+}
+
 func main() {
 	// Echo instance
 	e := echo.New()
@@ -95,6 +114,7 @@ func main() {
 	e.GET("/mobile/:data", getMobiles) //=> GET by parameter
 	e.POST("/mobile", addMobile)
 	e.POST("/laptop", addLaptop)
+	e.POST("/tablet", addTablet)
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
 }
