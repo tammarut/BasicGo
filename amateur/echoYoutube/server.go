@@ -17,6 +17,11 @@ type Mobilest struct {
 	Storage string `json: "storage, omitempty"`
 	Type    string `json: "type, omitempty"`
 }
+type Laptopst struct {
+	Laptop string `json: "laptop, omitempty"`
+	Cpu    string `json: "cpu, omitempty"`
+	Ram    string `json: "ram, omitempty"`
+}
 
 // Handler
 func hello(c echo.Context) error { //=> Default
@@ -63,6 +68,20 @@ func addMobile(c echo.Context) error {
 	return c.String(http.StatusOK, "We got your mobiles!!")
 
 }
+func addLaptop(c echo.Context) error {
+	laptop := Laptopst{}
+
+	defer c.Request().Body.Close()
+
+	err := json.NewDecoder(c.Request().Body).Decode(&laptop)
+	if err != nil {
+		log.Println("Failed processing func addLaptop NewDecoder:", err)
+		c.String(http.StatusInternalServerError, "Error =>func addLaptop Newdecoder")
+	}
+
+	fmt.Printf("%#v\n", laptop)
+	return c.String(http.StatusOK, "We got your laptop!!")
+}
 func main() {
 	// Echo instance
 	e := echo.New()
@@ -75,7 +94,7 @@ func main() {
 	e.GET("/", hello)                  //=> Hello
 	e.GET("/mobile/:data", getMobiles) //=> GET by parameter
 	e.POST("/mobile", addMobile)
-
+	e.POST("/laptop", addLaptop)
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
 }
