@@ -101,13 +101,21 @@ func addTablet(c echo.Context) error { //=> Solution3: Slow than both solutions 
 	return c.String(http.StatusOK, "We got your tablet!!")
 }
 
+func admin(c echo.Context) error { //=> Admin main page
+	return c.String(http.StatusOK, "Welcome to the secret admin main page!")
+}
+
 func main() {
 	// Echo instance
 	e := echo.New()
+	g := e.Group("/admin") //=> Group admin
 
 	// Middleware
-	e.Use(middleware.Logger())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{ //=> Custom log
+		Format: `[${time_rfc3339}]  status=${status}  ${method} ${host}${path}  ${latency_human}` + "\n", //=> [2019-02-11T23:56:04+07:00]  status=200  GET localhost:1323/admin/main  0s
+	}))
 	e.Use(middleware.Recover())
+	g.GET("/main", admin) //=> Admin main page
 
 	// Routes
 	e.GET("/", hello)                  //=> Hello
