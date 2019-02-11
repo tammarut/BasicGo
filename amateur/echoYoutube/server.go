@@ -2,19 +2,28 @@ package main
 
 //! Golang API(echo) =>> learn from Youtube
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
+type Mobilest struct {
+	Mobile  string `json: "mobile, omitempty"`
+	Storage string `json: "storage, omitempty"`
+	Type    string `json: "type, omitempty"`
+}
+
 // Handler
 func hello(c echo.Context) error { //=> Default
 	return c.String(http.StatusOK, "Hello, echoYoutube!")
 }
 
-func getCats(c echo.Context) error {
+func getMobiles(c echo.Context) error {
 	mobile := c.QueryParam("mobile")   //=> receive from param
 	storage := c.QueryParam("storage") //=> receive from param
 	typee := c.QueryParam("type")      //=> receive from param
@@ -35,6 +44,25 @@ func getCats(c echo.Context) error {
 	})
 }
 
+func addMobile(c echo.Context) error {
+	mobile := Mobilest{}
+
+	defer c.Request().Body.Close()
+	b, err := ioutil.ReadAll(c.Request().Body)
+	if err != nil {
+		log.Println("Failed reading body from add Mobile:", err)
+		return c.String(http.StatusInternalServerError, "Error =>func addMobile Request Body.")
+	}
+
+	err = json.Unmarshal(b, &mobile)
+	if err != nil {
+		log.Println("Failed unmarshaling func addMobile:", err)
+		return c.String(http.StatusInternalServerError, "Error =>func addMobile unmarshaling.")
+	}
+	fmt.Printf("%#v\n", mobile)
+	return c.String(http.StatusOK, "We got your mobiles!!")
+
+}
 func main() {
 	// Echo instance
 	e := echo.New()
@@ -44,8 +72,9 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
-	e.GET("/", hello)             //=> Hello
-	e.GET("/cats/:data", getCats) //=> GET by parameter
+	e.GET("/", hello)                  //=> Hello
+	e.GET("/mobile/:data", getMobiles) //=> GET by parameter
+	e.POST("/mobile", addMobile)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
