@@ -108,6 +108,14 @@ func loginAdmin(username, password string, c echo.Context) (bool, error) { //=> 
 	}
 	return false, nil //=> Nope!
 }
+
+func ServerHeader(header echo.HandlerFunc) echo.HandlerFunc { //=> Set what header you need
+	return func(c echo.Context) error { //* Return Anonymous func
+		c.Response().Header().Set(echo.HeaderServer, "khunPleum1.0") //=> OK
+		c.Response().Header().Set("SomeHeader", "Superman")          //=> Some funny
+		return header(c)
+	}
+}
 func admin(c echo.Context) error { //=> Admin main page
 	return c.String(http.StatusOK, "Welcome to the secret admin main page!")
 }
@@ -122,6 +130,7 @@ func main() {
 		Format: `[${time_rfc3339}]  status=${status}  ${method} ${host}${path}  ${latency_human} ${latency}` + "\n", //=> [2019-02-11T23:56:04+07:00]  status=200  GET localhost:1323/admin/main  0s
 	}))
 	e.Use(middleware.Recover())
+	e.Use(ServerHeader)                     //=> Custom Header(ServerHeader = name)
 	g.Use(middleware.BasicAuth(loginAdmin)) //=> Authorization (Username:Password)
 
 	g.GET("/main", admin) //=> Admin main page
