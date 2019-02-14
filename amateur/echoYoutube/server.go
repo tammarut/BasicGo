@@ -101,6 +101,13 @@ func addTablet(c echo.Context) error { //=> Solution3: Slow than both solutions 
 	return c.String(http.StatusOK, "We got your tablet!!")
 }
 
+func loginAdmin(username, password string, c echo.Context) (bool, error) { //=> login admin page
+	//check this in DB
+	if username == "admin" && password == "0000" { //=> True Go on!
+		return true, nil
+	}
+	return false, nil //=> Nope!
+}
 func admin(c echo.Context) error { //=> Admin main page
 	return c.String(http.StatusOK, "Welcome to the secret admin main page!")
 }
@@ -112,9 +119,11 @@ func main() {
 
 	// Middleware
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{ //=> Custom log
-		Format: `[${time_rfc3339}]  status=${status}  ${method} ${host}${path}  ${latency_human}` + "\n", //=> [2019-02-11T23:56:04+07:00]  status=200  GET localhost:1323/admin/main  0s
+		Format: `[${time_rfc3339}]  status=${status}  ${method} ${host}${path}  ${latency_human} ${latency}` + "\n", //=> [2019-02-11T23:56:04+07:00]  status=200  GET localhost:1323/admin/main  0s
 	}))
 	e.Use(middleware.Recover())
+	g.Use(middleware.BasicAuth(loginAdmin)) //=> Authorization (Username:Password)
+
 	g.GET("/main", admin) //=> Admin main page
 
 	// Routes
