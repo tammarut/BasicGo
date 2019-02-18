@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -29,6 +30,10 @@ type Tabletst struct {
 	Tablet  string `json: "tablet, omitempty"`
 	Storage string `json: "storage, omitempty"`
 	Screen  string `json: "screen, omitempty"`
+}
+type JwtClaims struct { //* struct keep token
+	Name string `json:"name`
+	jwt.StandardClaims
 }
 
 // Handler
@@ -120,11 +125,37 @@ func loginMember(c echo.Context) error { //=> login and keep cookies
 		//cookie := new(http.Cookie) // same above
 		cookie.Name = "sessionID" //=> Pattern keep cookie
 		cookie.Value = "some-string"
-		cookie.Expires = time.Now().Add(5 * time.Minute)
+		cookie.Expires = time.Now().Add(15 * time.Minute)
 		c.SetCookie(cookie) //=> Save Cookie
-		return c.String(http.StatusOK, "Log in successful.")
+
+		//!Create jwt token
+		token, err := createJwtToken() //=> Instance call function createJwtToken
+		if err != nil {
+			fmt.Println("Error: Creating JWT token ", err)
+			return c.String(http.StatusInternalServerError, "Error! JWT token sponse")
+		}
+		return c.JSON(http.StatusOK, map[string]string{ //=> return Json_map style ;Awesome!
+			"message": "Logged in successful.",
+			"token":   token, //=> return token to body
+		})
 	}
 	return c.String(http.StatusUnauthorized, "Wrong username or password")
+}
+func createJwtToken() (string, error) { //=> Not much, Create token
+	claims := JwtClaims{ //=> JwtClaim struct; above
+		"zero", //=> Name
+		jwt.StandardClaims{ //=> Detail
+			Id:        "main_user_id",
+			ExpiresAt: time.Now().Add(15 * time.Minute).Unix(),
+		},
+	}
+
+	rawToken := jwt.NewWithClaims(jwt.SigningMethodHS512, claims) //? What's these code under?
+	token, err := rawToken.SignedString([]byte("mySecret"))
+	if err != nil {
+		return "", err
+	}
+	return token, nil //=> return
 }
 
 func ServerHeader(header echo.HandlerFunc) echo.HandlerFunc { //=> Set what header you need
@@ -156,24 +187,39 @@ func admin(c echo.Context) error { //=> Admin main page
 func cookie(c echo.Context) error { //=> Cookie main page
 	return c.String(http.StatusOK, "Welcome cookie page!")
 }
+func jwtmain(c echo.Context) error { //=> JWT main page
+	user := c.Get("user")
+	token := user.(*jwt.Token)
+
+	claims := token.Claims.(jwt.MapClaims)
+	fmt.Println("User Name:", claims["name"], "User ID:", claims["jti"]) //=> print log out
+
+	return c.String(http.StatusOK, "The JWT page!")
+}
 
 func main() {
 	// Echo instance
 	e := echo.New()
 	a := e.Group("/admin")  //=> Group admin: Created
 	c := e.Group("/cookie") //=> Group cookie: Created
+	j := e.Group("/jwt")    //=> Group JWT: Created
 
 	// Middleware
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{ //=> Custom log
 		Format: `[${time_rfc3339}]  status=${status}  ${method} ${host}${path}  ${latency_human} ${latency}` + "\n", //=> [2019-02-11T23:56:04+07:00]  status=200  GET localhost:1323/admin/main  0s
 	}))
 	e.Use(middleware.Recover())
-	e.Use(ServerHeader)                     //=> Custom Header(ServerHeader = name)
-	a.Use(middleware.BasicAuth(loginAdmin)) //=> Authorization (Username:Password)
-	c.Use(checkCookie)                      //=> Check this user ว่ามีคุกกี้นี้ในระบบไหม?
+	e.Use(ServerHeader)                                  //=> Custom Header(ServerHeader = name)
+	a.Use(middleware.BasicAuth(loginAdmin))              //=> Authorization (Username:Password)
+	c.Use(checkCookie)                                   //=> Check this user ว่ามีคุกกี้นี้ในระบบไหม?
+	j.Use(middleware.JWTWithConfig(middleware.JWTConfig{ //=> Configture
+		SigningMethod: "HS512",
+		SigningKey:    []byte("mySecret"),
+	}))
 
-	a.GET("/main", admin)  //=> Admin main page
-	c.GET("/main", cookie) //=> Cookie main page
+	a.GET("/main", admin)   //=> Admin main page
+	c.GET("/main", cookie)  //=> Cookie main page
+	j.GET("/main", jwtmain) //=> JWT main page
 
 	// Routes
 	e.GET("/login", loginMember)       //=> GET login by parameter
