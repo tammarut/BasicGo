@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -108,6 +110,22 @@ func loginAdmin(username, password string, c echo.Context) (bool, error) { //=> 
 	}
 	return false, nil //=> Nope!
 }
+func loginMember(c echo.Context) error { //=> login and keep cookies
+	username := c.QueryParam("usr") //=> get parameter from
+	password := c.QueryParam("pwd")
+
+	//!check this member in Database
+	if username == "zero" && password == "1234" {
+		cookie := &http.Cookie{} //=> Call struct cookie
+		//cookie := new(http.Cookie) // same above
+		cookie.Name = "sessionID" //=> Pattern keep cookie
+		cookie.Value = "some-string"
+		cookie.Expires = time.Now().Add(5 * time.Minute)
+		c.SetCookie(cookie) //=> Save Cookie
+		return c.String(http.StatusOK, "Log in successful.")
+	}
+	return c.String(http.StatusUnauthorized, "Wrong username or password")
+}
 
 func ServerHeader(header echo.HandlerFunc) echo.HandlerFunc { //=> Set what header you need
 	return func(c echo.Context) error { //* Return Anonymous func
@@ -116,14 +134,34 @@ func ServerHeader(header echo.HandlerFunc) echo.HandlerFunc { //=> Set what head
 		return header(c)
 	}
 }
+func checkCookie(next echo.HandlerFunc) echo.HandlerFunc { //=> Check user's cookie
+	return func(c echo.Context) error {
+		cookie, err := c.Cookie("sessionID")
+		if err != nil {
+			if strings.Contains(err.Error(), "named cookie not present") { //=> If error likes this'named...'
+				return c.String(http.StatusUnauthorized, "You don't have any cookies.") //=>meaning
+			}
+			fmt.Print("Here's =>", err)
+			return err
+		}
+		if cookie.Value == "some-string" {
+			return next(c)
+		}
+		return c.String(http.StatusUnauthorized, "Uncorrect the right cookie")
+	}
+}
 func admin(c echo.Context) error { //=> Admin main page
 	return c.String(http.StatusOK, "Welcome to the secret admin main page!")
+}
+func cookie(c echo.Context) error { //=> Cookie main page
+	return c.String(http.StatusOK, "Welcome cookie page!")
 }
 
 func main() {
 	// Echo instance
 	e := echo.New()
-	g := e.Group("/admin") //=> Group admin
+	a := e.Group("/admin")  //=> Group admin: Created
+	c := e.Group("/cookie") //=> Group cookie: Created
 
 	// Middleware
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{ //=> Custom log
@@ -131,11 +169,14 @@ func main() {
 	}))
 	e.Use(middleware.Recover())
 	e.Use(ServerHeader)                     //=> Custom Header(ServerHeader = name)
-	g.Use(middleware.BasicAuth(loginAdmin)) //=> Authorization (Username:Password)
+	a.Use(middleware.BasicAuth(loginAdmin)) //=> Authorization (Username:Password)
+	c.Use(checkCookie)                      //=> Check this user ว่ามีคุกกี้นี้ในระบบไหม?
 
-	g.GET("/main", admin) //=> Admin main page
+	a.GET("/main", admin)  //=> Admin main page
+	c.GET("/main", cookie) //=> Cookie main page
 
 	// Routes
+	e.GET("/login", loginMember)       //=> GET login by parameter
 	e.GET("/", hello)                  //=> Hello
 	e.GET("/mobile/:data", getMobiles) //=> GET by parameter
 	e.POST("/mobile", addMobile)       //=>POST by ReadAll body and Unmarashal
