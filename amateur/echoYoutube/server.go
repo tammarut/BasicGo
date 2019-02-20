@@ -134,6 +134,13 @@ func loginMember(c echo.Context) error { //=> login and keep cookies
 			fmt.Println("Error: Creating JWT token ", err)
 			return c.String(http.StatusInternalServerError, "Error! JWT token sponse")
 		}
+		//! JWT Cookie
+		jwtCookie := &http.Cookie{}  //=> One Struct for JWT cookie (same above cookie)
+		jwtCookie.Name = "JWTCookie" //=> Same name as middlware: Tokenlookup
+		jwtCookie.Value = token      //=> token here!
+		cookie.Expires = time.Now().Add(15 * time.Minute)
+		c.SetCookie(jwtCookie) //=> Save JWT Cookie
+
 		return c.JSON(http.StatusOK, map[string]string{ //=> return Json_map style ;Awesome!
 			"message": "Logged in successful.",
 			"token":   token, //=> return token to body
@@ -215,6 +222,7 @@ func main() {
 	j.Use(middleware.JWTWithConfig(middleware.JWTConfig{ //=> Configture
 		SigningMethod: "HS512",
 		SigningKey:    []byte("mySecret"),
+		TokenLookup:   "cookie:JWTCookie", //=> Middleware for JWT Cookie [Save time copy]
 	}))
 
 	a.GET("/main", admin)   //=> Admin main page
