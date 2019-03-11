@@ -45,9 +45,31 @@ func main() {
 			</person>
 		</data>
 	`
+	rawJsonData := `
+	{
+		"person":[
+			{
+				"firstname":"Nic",
+				"lastname":"Fury"
+			},
+			{
+				"firstname":"Maria",
+				"lastname":"Fury",
+				"address":{
+					"city": "Tracy",
+					"state":"CA"
+				}
+			}
+		]
+	}`
 
 	var data Data                            //=> initialize Users array
-	xml.Unmarshal([]byte(rawXmlData), &data) //=> byteValue -> users
-	jsonData, _ := json.Marshal(data)        //=> marshal to JSON
+	xml.Unmarshal([]byte(rawXmlData), &data) //=> unmarshal rawXmlData (byte -> data)
+	jsonData, _ := json.Marshal(data)        //=> marshal -> JSON
 	fmt.Println(string(jsonData))            //=> print out
+
+	data = Data{}                              //=> set empty
+	json.Unmarshal([]byte(rawJsonData), &data) //=> unmarshal rawJsonData (byte -> data)
+	xmlData, _ := xml.Marshal(data)            //=> marshal to xml
+	fmt.Println(string(xmlData))               //=> print out
 }
