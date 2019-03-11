@@ -3,17 +3,17 @@
     <user type = "admin">
         <name>Adminkub</name>
         <social>
-            <facebook>https://facebook.com</facebook>
-            <twitter>https://twitter.com</twitter>
-            <youtube>https://youtube.com</youtube>
+            <facebook>https://facebook.com/admin</facebook>
+            <twitter>https://twitter.com/admin</twitter>
+            <youtube>https://youtube.com/admin</youtube>
         </social>
     </user>
     <user type = "reader">
         <name>Arima</name>
         <social>
-            <facebook>https://facebook.com</facebook>
-            <twitter>https://twitter.com</twitter>
-            <youtube>https://youtube.com</youtube>
+            <facebook>https://facebook.com/arima</facebook>
+            <twitter>https://twitter.com/arima</twitter>
+            <youtube>https://youtube.com/arima</youtube>
         </social>
     </user>
 </users>
