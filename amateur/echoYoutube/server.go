@@ -31,7 +31,7 @@ type Tabletst struct {
 	Storage string `json: "storage, omitempty"`
 	Screen  string `json: "screen, omitempty"`
 }
-type JwtClaims struct { //* struct keep token
+type JwtClaims struct { //. struct keep token
 	Name string `json:"name`
 	jwt.StandardClaims
 }
@@ -66,13 +66,13 @@ func addMobile(c echo.Context) error { //=> Solution1: Fastest ReadAll and Unmar
 	mobile := Mobilest{}
 
 	defer c.Request().Body.Close()
-	b, err := ioutil.ReadAll(c.Request().Body) //* Here's a key
+	b, err := ioutil.ReadAll(c.Request().Body) //. Here's a key
 	if err != nil {
 		log.Println("Failed reading body from add Mobile:", err)
 		return c.String(http.StatusInternalServerError, "Error =>func addMobile Request Body.")
 	}
 
-	err = json.Unmarshal(b, &mobile) //* Here's a key
+	err = json.Unmarshal(b, &mobile) //. Here's a key
 	if err != nil {
 		log.Println("Failed unmarshaling func addMobile:", err)
 		return c.String(http.StatusInternalServerError, "Error =>func addMobile unmarshaling.")
@@ -86,7 +86,7 @@ func addLaptop(c echo.Context) error { //=> Solution2: Fastest NewDecoder and De
 
 	defer c.Request().Body.Close()
 
-	err := json.NewDecoder(c.Request().Body).Decode(&laptop) //* Here's key
+	err := json.NewDecoder(c.Request().Body).Decode(&laptop) //. Here's key
 	if err != nil {
 		log.Println("Failed processing func addLaptop NewDecoder:", err)
 		c.String(http.StatusInternalServerError, "Error =>func addLaptop Newdecoder")
@@ -99,7 +99,7 @@ func addLaptop(c echo.Context) error { //=> Solution2: Fastest NewDecoder and De
 func addTablet(c echo.Context) error { //=> Solution3: Slow than both solutions above.
 	tablet := Tabletst{}
 
-	err := c.Bind(&tablet) //* Here
+	err := c.Bind(&tablet) //. Here
 	if err != nil {
 		log.Println("Failed processing func addTablet Bind:", err)
 		c.String(http.StatusInternalServerError, "Error =>func addTablet Bind")
@@ -166,7 +166,7 @@ func createJwtToken() (string, error) { //=> Not much, Create token
 }
 
 func ServerHeader(header echo.HandlerFunc) echo.HandlerFunc { //=> Set what header you need
-	return func(c echo.Context) error { //* Return Anonymous func
+	return func(c echo.Context) error { //. Return Anonymous func
 		c.Response().Header().Set(echo.HeaderServer, "khunPleum1.0") //=> OK
 		c.Response().Header().Set("SomeHeader", "Superman")          //=> Some funny
 		return header(c)
