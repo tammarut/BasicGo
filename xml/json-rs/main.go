@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+//. Profile ...
 type Profile struct {
 	Name    string
 	Hobbies []string
