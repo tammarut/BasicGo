@@ -30,9 +30,9 @@ func (h *handler) createUser(c echo.Context) error { //=> Regular POST
 }
 
 func (h *handler) getUser(c echo.Context) error { //=> GET by parameter
-	email := c.Param("name") //=>by name
-	user := h.db[email]      //=> search in DB by map
-	if user == nil {
+	email := c.Param("name") //=>receive name
+	user := h.db[email]      //=> search email in DB by map[string]*User
+	if user == nil {         //=>handle when empty
 		return echo.NewHTTPError(http.StatusNotFound, "user not found")
 	}
 	return c.JSON(http.StatusOK, user) //=>return Status and ของ

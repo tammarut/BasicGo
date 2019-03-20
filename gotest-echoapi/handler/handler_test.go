@@ -34,24 +34,24 @@ func TestCreateUser(t *testing.T) {
 	//. Assertions
 	if assert.NoError(t, h.createUser(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)     //=>compare status and code
-		assert.Equal(t, userJSON+"\n", rec.Body.String()) //=>compare "Want" and "mockDB"
+		assert.Equal(t, userJSON+"\n", rec.Body.String()) //=>compare "Want" and "mockDB"(response)
 	}
 }
 
-// func TestGetUser(t *testing.T) {
-// 	// Setup
-// 	e := echo.New()
-// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-// 	rec := httptest.NewRecorder()
-// 	c := e.NewContext(req, rec)
-// 	c.SetPath("/users/:name")
-// 	c.SetParamNames("name")
-// 	c.SetParamValues("Jon")
-// 	h := &handler{mockDB}
+func TestGetUser(t *testing.T) {
+	//. Setup
+	e := echo.New()                                      //=>instance e
+	req := httptest.NewRequest(http.MethodGet, "/", nil) //=>request GET "/"; no paylaod!
+	rec := httptest.NewRecorder()                        //=>initial response
+	c := e.NewContext(req, rec)                          //=>initial context
+	c.SetPath("/users/:name")                            //=>set Path
+	c.SetParamNames("name")                              //=>param
+	c.SetParamValues("Jon")                              //=>value
+	h := &handler{mockDB}                                //=>ready shoot
 
-// 	// Assertions
-// 	if assert.NoError(t, h.getUser(c)) {
-// 		assert.Equal(t, http.StatusOK, rec.Code)
-// 		assert.Equal(t, userJSON, rec.Body.String())
-// 	}
-// }
+	//. Assertions
+	if assert.NoError(t, h.getUser(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)          //=>compare StatusCode; 'Want' vs 'rec'(response)
+		assert.Equal(t, userJSON+"\n", rec.Body.String()) //=>compare 'Want' vs 'mockDB'(resonse)
+	}
+}
