@@ -3,12 +3,14 @@ package handler
 //! Golang Unit-test API(echo) =>>official cookbook
 //! But Fail \n some what?
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 type (
+	//User is struct for receive request
 	User struct {
 		Name  string `json:"name,omitempty"`
 		Email string `json:"email,omitempty"`
@@ -19,11 +21,12 @@ type (
 )
 
 func (h *handler) createUser(c echo.Context) error { //=> Regular POST
-	u := new(User) //=> ready to get new user
-	if err := c.Bind(u); err != nil {
+	u := new(User)                    //=> ready to get new user
+	if err := c.Bind(u); err != nil { //=>receive from body
 		return err
 	}
-	return c.JSON(http.StatusCreated, u)
+	fmt.Printf("%+v\n", u)
+	return c.JSON(http.StatusCreated, u) //=>return Status and ของ
 }
 
 func (h *handler) getUser(c echo.Context) error { //=> GET by parameter
@@ -32,5 +35,5 @@ func (h *handler) getUser(c echo.Context) error { //=> GET by parameter
 	if user == nil {
 		return echo.NewHTTPError(http.StatusNotFound, "user not found")
 	}
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, user) //=>return Status and ของ
 }

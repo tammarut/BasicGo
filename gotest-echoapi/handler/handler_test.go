@@ -12,43 +12,46 @@ import (
 )
 
 var (
-	mockDB = map[string]*User{ //=> mockDB
+	//=> mockDB
+	mockDB = map[string]*User{
 		"Jon": &User{"Jon", "jon@labstack.com"},
 	}
-	userJSON = `{"name":"Jon","email":"jon@labstack.com"}` //=> ของแบบเต็มๆ
+
+	//=>Expect
+	userJSON = `{"name":"Jon","email":"jon@labstack.com"}`
 )
 
 func TestCreateUser(t *testing.T) {
-	// Setup
-	e := echo.New()
-	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(userJSON))
+	//. Setup
+	e := echo.New()                                                               //=>instance e
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(userJSON)) //=>request POST "/" simulate payload(userJSON)
 	//req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	req.Header.Set("Content-Type", "application/json")
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-	h := &handler{mockDB}
+	req.Header.Set("Content-Type", "application/json") //=>Header
+	rec := httptest.NewRecorder()                      //=>initial response
+	c := e.NewContext(req, rec)                        //=>initial context
+	h := &handler{mockDB}                              //=> ready to shoot
 
-	// Assertions
+	//. Assertions
 	if assert.NoError(t, h.createUser(c)) {
-		assert.Equal(t, http.StatusCreated, rec.Code)
-		assert.Equal(t, userJSON, rec.Body.String())
+		assert.Equal(t, http.StatusCreated, rec.Code)     //=>compare status and code
+		assert.Equal(t, userJSON+"\n", rec.Body.String()) //=>compare "Want" and "mockDB"
 	}
 }
 
-func TestGetUser(t *testing.T) {
-	// Setup
-	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-	c.SetPath("/users/:name")
-	c.SetParamNames("name")
-	c.SetParamValues("Jon")
-	h := &handler{mockDB}
+// func TestGetUser(t *testing.T) {
+// 	// Setup
+// 	e := echo.New()
+// 	req := httptest.NewRequest(http.MethodGet, "/", nil)
+// 	rec := httptest.NewRecorder()
+// 	c := e.NewContext(req, rec)
+// 	c.SetPath("/users/:name")
+// 	c.SetParamNames("name")
+// 	c.SetParamValues("Jon")
+// 	h := &handler{mockDB}
 
-	// Assertions
-	if assert.NoError(t, h.getUser(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Equal(t, userJSON, rec.Body.String())
-	}
-}
+// 	// Assertions
+// 	if assert.NoError(t, h.getUser(c)) {
+// 		assert.Equal(t, http.StatusOK, rec.Code)
+// 		assert.Equal(t, userJSON, rec.Body.String())
+// 	}
+// }
