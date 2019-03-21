@@ -1,7 +1,6 @@
 package handler
 
-//! Golang Unit-test API(echo) =>>official cookbook
-//! But Fail \n some what?
+//! Golang Unit-test API(echo) =>>Official cookbook
 import (
 	"fmt"
 	"net/http"

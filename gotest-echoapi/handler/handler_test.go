@@ -1,6 +1,7 @@
 package handler
 
-//! 2 testcase but Fail expect "..." actual "...\n"
+//// 2 testcase but Fail expect "..." actual "...\n"
+//! All tests =>>PASS
 import (
 	"net/http"
 	"net/http/httptest"
