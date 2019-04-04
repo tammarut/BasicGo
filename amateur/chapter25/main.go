@@ -12,32 +12,34 @@ func main() {
 	fmt.Print("Input number: ")
 	fmt.Scanln(&keyboard)
 
-	slicestring := strings.Split(keyboard, "")
+	slicestring := strings.Split(keyboard, "") //.Here is key
 
 	for _, v := range slicestring {
+		var hold string
 		switch v {
 		case "0":
-			fmt.Print("zero ")
+			hold = "zero"
 		case "1":
-			fmt.Print("one ")
+			hold = "one"
 		case "2":
-			fmt.Print("two ")
+			hold = "two"
 		case "3":
-			fmt.Print("three ")
+			hold = "three"
 		case "4":
-			fmt.Print("four ")
+			hold = "four"
 		case "5":
-			fmt.Print("five ")
+			hold = "five"
 		case "6":
-			fmt.Print("six ")
+			hold = "six"
 		case "7":
-			fmt.Print("seven ")
+			hold = "seven"
 		case "8":
-			fmt.Print("eight ")
+			hold = "eight"
 		case "9":
-			fmt.Print("nine ")
+			hold = "nine"
 		default:
 			fmt.Println("Don't know!")
 		}
+		fmt.Printf("%s ", hold)
 	}
 }
