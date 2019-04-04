@@ -8,7 +8,8 @@ import (
 	echo "github.com/labstack/echo/v4"
 )
 
-func Jwtmain(c echo.Context) error { //=> JWT main page
+//Jwtmain is jwt main page
+func Jwtmain(c echo.Context) error {
 	user := c.Get("user")
 	token := user.(*jwt.Token)
 

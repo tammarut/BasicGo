@@ -9,12 +9,14 @@ import (
 	echo "github.com/labstack/echo/v4"
 )
 
-type JwtClaims struct { //. struct keep token
-	Name string `json:"name`
+//JwtClaims keep token
+type JwtClaims struct {
+	Name string `json:"name"`
 	jwt.StandardClaims
 }
 
-func LoginMember(c echo.Context) error { //=> login and keep cookies
+//LoginMember is login and keep cookies
+func LoginMember(c echo.Context) error {
 	username := c.QueryParam("usr") //=> get parameter from
 	password := c.QueryParam("pwd")
 
