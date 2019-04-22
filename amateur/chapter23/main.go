@@ -4,7 +4,7 @@ package main
 
 import "fmt"
 
-//* Soulution 1
+//. Soulution 1
 func main() {
 	var input int
 	fmt.Print("Input numbers:")
@@ -23,7 +23,7 @@ func main() {
 
 }
 
-//* Solution 2
+//. Solution 2
 // func main() {
 // 	var input, x, y int
 // 	fmt.Print("Input numbers:")
