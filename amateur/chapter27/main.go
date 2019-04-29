@@ -2,16 +2,22 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 )
 
 //!เขียนโปรแกรมสี่เหลี่ยมจตุรัสพื้นหลังเลขเรียง 0 ถึง รับจากคีย์บอร์ด (ถ้าเลข>10 แสดงหลักหน่วยเท่านั้น)
 
 func main() {
-	var absi, absj float64
-	n := 13
+	var n int
+	fmt.Print("Enter number: ")
+	fmt.Scanln(&n)
 	n = n % 10
+	if n == 0 {
+		log.Fatal("Except value end with 0")
+	}
 
+	var absi, absj float64
 	//. Solution2
 	for i := 0; i <= 2*n; i++ {
 		for j := 0; j <= 2*n; j++ {
